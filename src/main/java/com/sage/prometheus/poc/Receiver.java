@@ -1,20 +1,25 @@
 package com.sage.prometheus.poc;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import java.time.Instant;
 
 @Component
 public class Receiver
 {
     private static final Logger logger = LoggerFactory.getLogger(Receiver.class);
 
-    public void receiveMessage(String requestId) throws Exception
+    public void receiveMessage(String response) throws Exception
     {
-        long completionTime = System.currentTimeMillis();
+        ObjectMapper mapper = new ObjectMapper();
+        ResponseMessage msg = mapper.readValue(response, ResponseMessage.class);
 
-        long startTime = RunnerApplication.messages.get(requestId).longValue();
+        Instant ended = Instant.parse(msg.completed);
+        RunnerApplication.messages.put(msg.requestId, ended);
 
-        logger.info("Message: " + requestId + " - " + (completionTime - startTime) + "ms");
+        RunnerApplication.messagesProcessed.incrementAndGet();
     }
 }

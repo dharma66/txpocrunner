@@ -11,15 +11,18 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootApplication
 public class RunnerApplication
 {
 	final static String postQueueName = "worker-queue";
 	final static String readQueueName = "response-queue";
-	final static Map<String, Long> messages = new HashMap<>();
+	final static Map<String, Instant> messages = new HashMap<>();
+	static AtomicInteger messagesProcessed = new AtomicInteger(0);
 
 	@Bean
 	Queue responseQueue()
